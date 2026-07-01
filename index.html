@@ -390,9 +390,9 @@ function countGesture() {
       </div>
       <div class="dual-range-wrap" id="wrap-pop">
         <div class="dual-range-track"><div class="dual-range-fill" id="fill-pop"></div></div>
-        <input type="range" class="range-lo" id="lo-pop" min="0" max="4000000" step="10000" value="0"
+        <input type="range" class="range-lo" id="lo-pop" min="0" max="1500000" step="10000" value="0"
                oninput="updateDual('pop')">
-        <input type="range" class="range-hi" id="hi-pop" min="0" max="4000000" step="10000" value="4000000"
+        <input type="range" class="range-hi" id="hi-pop" min="0" max="1500000" step="10000" value="1500000"
                oninput="updateDual('pop')">
       </div>
     </div>
@@ -591,8 +591,8 @@ document.getElementById("filter-header").addEventListener("click", function(e) {
 const FILTERS = {
   price:   { field:'zv',  min:0,    max:2100000, step:10000, nullPass:true,
              fmt:(lo,hi) => (lo<=0 && hi>=2100000) ? 'Any' : '$'+Math.round(lo/1000)+'k – '+(hi>=2100000?'$2M+':'$'+Math.round(hi/1000)+'k') },
-  pop:     { field:'po',  min:0,    max:4000000, step:10000, nullPass:true,
-             fmt:(lo,hi) => (lo<=0 && hi>=4000000) ? 'Any' : fmtPop(lo)+' – '+fmtPop(hi) },
+  pop:     { field:'po',  min:0,    max:1500000, step:10000, nullPass:true,
+             fmt:(lo,hi) => (lo<=0 && hi>=1500000) ? 'Any' : fmtPop(lo)+' – '+fmtPop(hi) },
   curdays: { field:'cu',  min:0,    max:180,     step:1,     nullPass:false,
              fmt:(lo,hi) => (lo<=0 && hi>=180) ? 'Any' : lo+'–'+(hi>=180?'180+':hi)+' days' },
   futdays: { field:'s5',  min:0,    max:200,     step:1,     nullPass:false,
@@ -604,7 +604,7 @@ const FILTERS = {
 // filterValues stores [lo, hi] per filter
 const filterValues = {
   price:   [0,    2100000],
-  pop:     [0,    4000000],
+  pop:     [0,    1500000],
   curdays: [0,    180],
   futdays: [0,    200],
   delta:   [-60,  120],
