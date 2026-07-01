@@ -105,7 +105,15 @@ input[type="range"] { width: 100%; height: 4px; accent-color: #3a86e8; cursor: p
 
 <div id="map"></div>
 
-<div id="title-panel">Perfect Weather Days — US &amp; Canada &nbsp;|&nbsp; Present vs 2071–2100</div>
+<div id="title-panel">
+  <div id="title-main">Perfect Weather Days — US &amp; Canada &nbsp;|&nbsp; Present vs 2080</div>
+  <div id="title-sub">Days/yr where highs 68–82°F, lows 50–65°F, dew point 40–60°F, wind &lt;10 mph &amp; cloud cover &lt;65%</div>
+</div>
+<style>
+#title-panel { text-align: center; }
+#title-main  { font-size: 14px; font-weight: bold; }
+#title-sub   { font-size: 11px; font-weight: normal; color: #666; margin-top: 3px; }
+</style>
 
 <!-- ── Tip panel ─────────────────────────────────────────────────────────── -->
 <div id="tip-trigger" onclick="document.getElementById('tip-panel').classList.toggle('open')" style="display:none">
@@ -220,6 +228,26 @@ body.dark-mode #tip-trigger { background: #c0392b; }
 </style>
 
 <script>
+// ── panel collapse toggle ─────────────────────────────────────────────────────
+function togglePanel(bodyId, chevronId) {
+  const body = document.getElementById(bodyId);
+  const chev = document.getElementById(chevronId);
+  const hidden = body.style.display === 'none';
+  body.style.display = hidden ? '' : 'none';
+  chev.textContent = hidden ? '▾' : '▸';
+}
+
+// ── map interaction milestone (zoom/pan) ──────────────────────────────────────
+let mapInteractions = 0;
+function onMapInteract() {
+  if (localStorage.getItem('pwToastShown')) return;
+  if (++mapInteractions >= 20) {
+    document.getElementById('tip-toast').style.display = 'flex';
+    document.getElementById('tip-trigger').style.display = 'flex';
+    localStorage.setItem('pwToastShown', '1');
+  }
+}
+
 // ── reveal perk after tip click ───────────────────────────────────────────────
 function revealPerk() {
   const perk = document.getElementById('tip-perk');
@@ -249,12 +277,18 @@ function toggleDarkMode() {
     : '🌙 Supporter perk: Click to unlock Dark Mode (honour system — no DRM, just vibes)';
 }
 
-// ── milestone toast: show after 7 filter interactions ─────────────────────────
-let filterUses = 0;
-function trackFilterUse() {
+// ── milestone toast: count distinct slider gestures (mouseup), not oninput ────
+let filterUses = 0, sliderActive = false;
+function trackFilterUse() { /* no-op — gesture tracking handles this */ }
+document.addEventListener('mousedown',  e => { if (e.target.type==='range') sliderActive=true; });
+document.addEventListener('touchstart', e => { if (e.target.type==='range') sliderActive=true; });
+document.addEventListener('mouseup',    countGesture);
+document.addEventListener('touchend',   countGesture);
+function countGesture() {
+  if (!sliderActive) return;
+  sliderActive = false;
   if (localStorage.getItem('pwToastShown')) return;
-  filterUses++;
-  if (filterUses >= 7) {
+  if (++filterUses >= 5) {
     document.getElementById('tip-toast').style.display = 'flex';
     document.getElementById('tip-trigger').style.display = 'flex';
     localStorage.setItem('pwToastShown', '1');
@@ -264,22 +298,26 @@ function trackFilterUse() {
 
 <!-- Layer toggle -->
 <div id="layer-panel">
-  <h3>Layer</h3>
-  <div class="layer-option">
-    <input type="radio" name="layer" id="l-cu" value="cu" checked>
-    <label for="l-cu">Current (2017 baseline)</label>
-  </div>
-  <div class="layer-option">
-    <input type="radio" name="layer" id="l-s5" value="s5">
-    <label for="l-s5">Future SSP5-8.5</label>
-  </div>
-  <div class="layer-option">
-    <input type="radio" name="layer" id="l-s1" value="s1">
-    <label for="l-s1">Future SSP1-2.6</label>
-  </div>
-  <div class="layer-option">
-    <input type="radio" name="layer" id="l-d5" value="d5">
-    <label for="l-d5">Change SSP5-8.5</label>
+  <h3 onclick="togglePanel('layer-body','layer-chevron')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center">
+    Layer <span id="layer-chevron">▾</span>
+  </h3>
+  <div id="layer-body">
+    <div class="layer-option">
+      <input type="radio" name="layer" id="l-cu" value="cu" checked>
+      <label for="l-cu">Current</label>
+    </div>
+    <div class="layer-option">
+      <input type="radio" name="layer" id="l-s5" value="s5">
+      <label for="l-s5">2080 — High Emissions</label>
+    </div>
+    <div class="layer-option">
+      <input type="radio" name="layer" id="l-s1" value="s1">
+      <label for="l-s1">2080 — Low Emissions</label>
+    </div>
+    <div class="layer-option">
+      <input type="radio" name="layer" id="l-d5" value="d5">
+      <label for="l-d5">Change by 2080</label>
+    </div>
   </div>
 </div>
 
@@ -343,14 +381,18 @@ function trackFilterUse() {
 
 <!-- Legend -->
 <div id="legend">
-  <h4>Perfect Days / Year</h4>
-  <div id="legend-abs"></div>
-  <div id="legend-delta" style="display:none">
-    <h4 style="margin-top:4px">Change (days)</h4>
-    <div id="legend-delta-rows"></div>
+  <h4 onclick="togglePanel('legend-body','legend-chevron')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
+    Perfect Days / Year <span id="legend-chevron">▾</span>
+  </h4>
+  <div id="legend-body" style="margin-top:6px">
+    <div id="legend-abs"></div>
+    <div id="legend-delta" style="display:none">
+      <h4 style="margin-top:4px">Change (days)</h4>
+      <div id="legend-delta-rows"></div>
+    </div>
+    <div style="font-size:10px;color:#888;margin-top:6px">&#11044; size = population (5k → 10M)</div>
+    <div style="font-size:10px;color:#888">🇨🇦 Canada included</div>
   </div>
-  <div style="font-size:10px;color:#888;margin-top:6px">&#11044; = city (size ~ population)</div>
-  <div style="font-size:10px;color:#888">&#127464;&#127462; Canada cities included</div>
 </div>
 
 <script>
@@ -413,8 +455,8 @@ function tooltipHtml(city) {
   let html = `<b>${flag}${city.n}</b><br/>`;
   html += `<table style="font-size:11px;border-collapse:collapse;margin-top:4px">`;
   html += `<tr><td style="color:#666;padding-right:8px">Current:</td><td><b>${fmt(city.cu)} days/yr</b></td></tr>`;
-  html += `<tr><td style="color:#666;padding-right:8px">Future SSP5-8.5:</td><td><b>${fmt(city.s5)} days/yr</b></td></tr>`;
-  html += `<tr><td style="color:#666;padding-right:8px">Future SSP1-2.6:</td><td><b>${fmt(city.s1)} days/yr</b></td></tr>`;
+  html += `<tr><td style="color:#666;padding-right:8px">2080 (high emissions):</td><td><b>${fmt(city.s5)} days/yr</b></td></tr>`;
+  html += `<tr><td style="color:#666;padding-right:8px">2080 (low emissions):</td><td><b>${fmt(city.s1)} days/yr</b></td></tr>`;
   html += `<tr><td style="color:#666;padding-right:8px">Change:</td><td><b>${fmt(city.d5)} days/yr</b></td></tr>`;
   html += `<tr><td style="color:#666;padding-right:8px">Population:</td><td><b>${fmtPop(city.po)}</b></td></tr>`;
   if (city.pg !== null && city.pg !== undefined) {
@@ -429,6 +471,7 @@ function tooltipHtml(city) {
 
 // ── map init ──────────────────────────────────────────────────────────────────
 const map = L.map("map", { center: [44, -100], zoom: 4, zoomControl: true });
+map.on('zoomend moveend', onMapInteract);
 
 L.tileLayer("https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png", {
   attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
