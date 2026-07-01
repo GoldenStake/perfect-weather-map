@@ -662,7 +662,8 @@ function resetFilters(e) {
   });
 }
 
-// initial render
+// initial render — initialise fill bars to full-width blue, then render cities
+Object.keys(FILTERS).forEach(id => updateDual(id));
 applyFilters();
 
 // ── legend ────────────────────────────────────────────────────────────────────
