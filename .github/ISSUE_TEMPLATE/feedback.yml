@@ -1,0 +1,47 @@
+name: 💬 Feedback
+description: Share a thought, question, or suggestion about the map
+title: "[Feedback] "
+labels: ["feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to share feedback on the **Perfect Weather Days** map!
+        Your input helps improve future visualizations.
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: What kind of feedback is this?
+      options:
+        - 🐛 Something looks wrong / data issue
+        - 💡 Feature idea or improvement
+        - ❓ Question about the data or methodology
+        - 🌍 Missing city or region
+        - 🙌 General comment
+    validations:
+      required: true
+
+  - type: textarea
+    id: feedback
+    attributes:
+      label: Your feedback
+      placeholder: Tell us what you noticed or what you'd like to see...
+    validations:
+      required: true
+
+  - type: input
+    id: city
+    attributes:
+      label: City or region (if relevant)
+      placeholder: e.g. Denver CO, Calgary AB
+    validations:
+      required: false
+
+  - type: input
+    id: email
+    attributes:
+      label: Email (optional — if you'd like a reply)
+      placeholder: you@example.com
+    validations:
+      required: false
