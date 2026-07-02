@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Perfect Weather Days — US & Canada</title>
+<title>Weather Havens</title>
 
 <!-- Leaflet -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -128,7 +128,7 @@ html, body { height: 100%; }
 <div id="map"></div>
 
 <div id="title-panel">
-  <div id="title-main">Perfect Weather Days — US &amp; Canada &nbsp;|&nbsp; Present vs 2080</div>
+  <div id="title-main">Weather Havens &nbsp;|&nbsp; US &amp; Canada · Present vs 2080</div>
   <div id="title-sub">Days/yr where highs 68–82°F, lows 50–65°F, dew point 40–60°F, wind &lt;10 mph &amp; cloud cover &lt;65%</div>
 </div>
 <style>
@@ -144,7 +144,7 @@ html, body { height: 100%; }
 
 <div id="tip-panel">
   <div id="tip-header">
-    <span>🌍 Keep this map alive</span>
+    <span>🌍 Keep Weather Havens alive</span>
     <button onclick="document.getElementById('tip-panel').classList.remove('open')" id="tip-close">✕</button>
   </div>
   <p id="tip-tagline">Built by one person. No ads, no tracking, no VC money.<br>If it helped you, consider a tip:</p>
@@ -375,7 +375,7 @@ function countGesture() {
 
     <div class="filter-row">
       <div class="filter-label-row">
-        <span>Current Perfect Days</span>
+        <span>Current Weather Havens</span>
         <span class="filter-val" id="val-curdays">Any</span>
       </div>
       <div id="slider-curdays" class="nui-slider"></div>
@@ -383,7 +383,7 @@ function countGesture() {
 
     <div class="filter-row">
       <div class="filter-label-row">
-        <span>2080 Perfect Days — High Emissions</span>
+        <span>2080 Weather Havens — High Emissions</span>
         <span class="filter-val" id="val-futdays">Any</span>
       </div>
       <div id="slider-futdays" class="nui-slider"></div>
@@ -424,7 +424,7 @@ function countGesture() {
 
 <div id="legend">
   <h4 onclick="togglePanel('legend-body','legend-chevron')" style="cursor:pointer;display:flex;justify-content:space-between;align-items:center;margin-bottom:0">
-    Perfect Days / Year <span id="legend-chevron">▾</span>
+    Weather Haven Days / Year <span id="legend-chevron">▾</span>
   </h4>
   <div id="legend-body" style="margin-top:6px">
     <div id="legend-abs"></div>
